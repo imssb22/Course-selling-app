@@ -1,43 +1,48 @@
 import { useEffect, useState } from "react";
 
 function Courses() {
-    const [courses, setCourses] = useState([]);
-    // const [isLoading, setIsLoading] = useState(true);
+  const [courses, setCourses] = useState([]);
+  // const [isLoading, setIsLoading] = useState(true);
 
-    useEffect(() => {
-        fetch("http://localhost:3000/admin/courses", 
-            {
-                method : "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    "authorization" :"Bearer " + localStorage.getItem("token")
-                }
-            }).then((res) => res.json().then((data) => {
-                if(res.ok){
-                    setCourses(data.courses);
-                    // setIsLoading(false);
-                }
-                else{
-                    console.log(data.message);
-                }
-            }))
-    }, [])
+  useEffect(() => {
+    fetch("http://localhost:3000/admin/courses", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "authorization": "Bearer " + localStorage.getItem("token"),
+      },
+    }).then((res) =>
+      res.json().then((data) => {
+        if (res.ok) {
+          setCourses(data.courses);
+          // setIsLoading(false);
+        } else {
+          console.log(data.message);
+        }
+      })
+    );
+  }, []);
 
-    return (
-        <div>
-            <div className="flex items-center justify-center min-h-screen bg-gray-100">
-                <div className="bg-white p-8 rounded-lg shadow-lg w-96">
-                    <h3 className="text-2xl font-bold text-center mb-6">Courses</h3>
-                    {/* {isLoading && <p className="text-center text-red-500">Loading...</p>} */}
-                    {courses.map((course) => (
-                        <div key={course._id} className="mb-4 p-4 border rounded-lg">
-                            <h4 className="text-lg font-bold">{course.title}</h4>
-                            <p className="text-gray-600">{course.description}</p>
-                        </div>
-                    ))}
-                </div>
+  return (
+    <div className="min-h-screen bg-gray-100 py-8">
+      <div className="container mx-auto">
+        <h3 className="text-3xl font-bold text-center mb-8">Courses</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {courses.map((course) => (
+            <div key={course.id} className="bg-white p-6 rounded-lg shadow-lg">
+              <h4 className="text-xl font-bold mb-2">{course.title}</h4>
+              <p className="text-gray-600 mb-4">{course.description}</p>
+              <img
+                src={course.image}
+                alt="course"
+                className="h-48 w-full object-cover rounded-lg"
+              />
             </div>
+          ))}
         </div>
-    )
+      </div>
+    </div>
+  );
 }
-export default Courses;    
+
+export default Courses;
