@@ -1,7 +1,7 @@
 import { useState } from "react";
 // import { useNavigate } from "react-router-dom";
 function Addcourse() {
-  const [formData, setFormData] = useState({ title: "", description: "" });
+  const [formData, setFormData] = useState({ title: "", description: "", image : "" });
   const [message, setMessage] = useState("");
     // const navigate = useNavigate();
   const handleChange = (e) => {
@@ -23,7 +23,7 @@ function Addcourse() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": "Bearer " + token, // ✅ Uses correct "Bearer " + token format
+          "Authorization": "Bearer " + token, //
         },
         body: JSON.stringify(formData),
       });
@@ -31,7 +31,7 @@ function Addcourse() {
       const data = await response.json();
       if (response.ok) {
         setMessage("Course added successfully!");
-        setFormData({ title: "", description: "" }); // ✅ Clear form after success
+        setFormData({ title: "", description: "", image : ""}); // 
       } else {
         setMessage(data.message || "Failed to add course.");
       }
@@ -65,6 +65,17 @@ function Addcourse() {
               type="text"
               name="description"
               value={formData.description}
+              onChange={handleChange}
+              required
+              className="w-full px-3 py-2 border rounded-lg focus:outline-none"
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700">Image Link</label>
+            <input
+              type="text"
+              name="image"
+              value={formData.image}
               onChange={handleChange}
               required
               className="w-full px-3 py-2 border rounded-lg focus:outline-none"
