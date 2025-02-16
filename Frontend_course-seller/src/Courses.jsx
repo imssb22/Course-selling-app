@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-
+import { Link } from "react-router-dom";
 function Courses() {
   const [courses, setCourses] = useState([]);
   // const [isLoading, setIsLoading] = useState(true);
@@ -30,7 +30,10 @@ function Courses() {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {courses.map((course) => (
             <div key={course.id} className="bg-white p-6 rounded-lg shadow-lg">
+              <Link to={`/courses/${course.id}`}>
               <h4 className="text-xl font-bold mb-2">{course.title}</h4>
+              </Link>
+              
               <p className="text-gray-600 mb-4">{course.description}</p>
               <img
                 src={course.image}
