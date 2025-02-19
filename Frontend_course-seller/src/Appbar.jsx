@@ -1,33 +1,38 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { Link } from "react-router-dom";
 
 const AppBar = () => {
   const navigate = useNavigate();
   const [userEmail, setUserEmail] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const fetchUser = () => {
+
+  const fetchUser = async () => {
     const token = localStorage.getItem("token");
     if (!token) {
       setUserEmail(null);
+      setIsLoading(false);
       return;
     }
-
-    fetch("http://localhost:3000/admin/me", {
-      method: "GET",
-      headers: {
-        "Authorization": "Bearer " + token,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.username) {
-          setUserEmail(data.username);
-          setIsLoading(false);
+    axios
+      .get("http://localhost:3000/admin/me", {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      })
+      .then((response) => {
+        if (response.data.username) {
+          setUserEmail(response.data.username);
         } else {
           setUserEmail(null);
         }
+        setIsLoading(false);
       })
-      .catch(() => setUserEmail(null));
+      .catch(() => {
+        setUserEmail(null);
+        setIsLoading(false);
+      });
   };
 
   // Run on mount and when localStorage token changes
@@ -45,18 +50,22 @@ const AppBar = () => {
     <nav className="bg-blue-600 text-white p-4 shadow-md">
       <div className="container mx-auto flex justify-between items-center">
         {/* Left: Company Name */}
-        <h1 className="text-2xl font-bold">MyCompany</h1>
+        <Link to="/">
+          <h1 className="text-2xl font-bold">MyCompany</h1>
+        </Link>
 
         {/* Right: Authentication Buttons */}
         <div className="space-x-4">
-          {userEmail ? (
+          {isLoading ? (
+            <p>Loading...</p>
+          ) : userEmail ? (
             <>
-              <span>{userEmail}</span>
               <button
-                onClick={handleLogout}
+                type="button"
+                onClick={() => navigate("/addcourse")}
                 className="border border-white px-4 py-2 rounded-lg font-medium hover:bg-white hover:text-blue-600 transition"
               >
-                Log Out
+                Add Course
               </button>
               <button
                 type="button"
@@ -64,6 +73,12 @@ const AppBar = () => {
                 className="border border-white px-4 py-2 rounded-lg font-medium hover:bg-white hover:text-blue-600 transition"
               >
                 View Courses
+              </button>
+              <button
+                onClick={handleLogout}
+                className="border border-white px-4 py-2 rounded-lg font-medium hover:bg-white hover:text-blue-600 transition"
+              >
+                Log Out
               </button>
             </>
           ) : (

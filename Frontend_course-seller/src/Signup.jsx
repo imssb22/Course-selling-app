@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Signup = () => {
   const [username, setUsername] = useState("");
@@ -9,21 +10,22 @@ const Signup = () => {
   const handleSignup = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:3000/admin/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
+      const response = await axios.post("http://localhost:3000/admin/signup", {
+        username: username,
+        password: password,
       });
 
-      const data = await response.json();
-      if (response.ok) {
+      const data = response.data;
+      if (response.status === 200) {
         localStorage.setItem("token", data.token); // Save token
         window.location = "/addcourse"; // Redirect to home/dashboard
+        // navigate("/addcourse"); // Redirect to home/dashboard
       } else {
         alert(data.message);
       }
     } catch (error) {
       console.error("Signup Error:", error);
+      alert("Signup failed. Please try again.");
     }
   };
 

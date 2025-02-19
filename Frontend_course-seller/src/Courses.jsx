@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 function Courses() {
@@ -5,22 +6,34 @@ function Courses() {
   // const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://localhost:3000/admin/courses", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "authorization": "Bearer " + localStorage.getItem("token"),
-      },
-    }).then((res) =>
-      res.json().then((data) => {
-        if (res.ok) {
-          setCourses(data.courses);
-          // setIsLoading(false);
-        } else {
-          console.log(data.message);
+    // fetch("http://localhost:3000/admin/courses", {
+    //   method: "GET",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //     "authorization": "Bearer " + localStorage.getItem("token"),
+    //   },
+    // }).then((res) =>
+    //   res.json().then((data) => {
+    //     if (res.ok) {
+    //       setCourses(data.courses);
+    //       // setIsLoading(false);
+    //     } else {
+    //       console.log(data.message);
+    //     }
+    //   })
+    // );
+    axios.get("http://localhost:3000/admin/courses", {
+       headers: {
+          Authorization: "Bearer " + localStorage.getItem("token"),  
+       }
+    }).then((response) => {
+        if(response.data.courses) {
+            setCourses(response.data.courses);
+        } 
+        else{
+            console.log(response.data.message);
         }
-      })
-    );
+     })
   }, []);
 
   return (

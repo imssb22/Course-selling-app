@@ -8,6 +8,12 @@ app.use(cors());
 let ADMINS = [];
 let USERS = [];
 let COURSES = [];
+import {z} from "zod"
+
+let signupProps = z.object({
+  username : z.string().min(5).max(30),
+  password : z.string().min(5).max(20)
+})
 
 // Read data from file, or initialize to empty array if file does not exist
 try {
@@ -41,7 +47,14 @@ const authenticateJwt = (req, res, next) => {
 
 // Admin routes
 app.post('/admin/signup', (req, res) => {
-  const { username, password } = req.body;
+  const parsedInputs = signupProps.safeParse(req.body);
+  if(!parsedInputs.success){
+    return res.status(411).json({message : "Invalid inputs"});
+    message : parsedInputs.error
+  }
+  const username = parsedInputs.username;
+  const password = parsedInputs.password;  
+  
   const admin = ADMINS.find(a => a.username === username);
   console.log("admin signup");
   if (admin) {
