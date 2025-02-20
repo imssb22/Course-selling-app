@@ -1,23 +1,21 @@
-
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import axios from "axios";
 
 function Course() {
   const [course, setCourse] = useState(null);
   const { courseId } = useParams();
 
   useEffect(() => {
-    fetch("http://localhost:3000/admin/courses/" + courseId, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer " + localStorage.getItem("token"),
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.course) {
-          setCourse(data.course);
+    axios
+      .get(`http://localhost:3000/admin/courses/${courseId}`, {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      })
+      .then((res) => {
+        if (res.data.course) {
+          setCourse(res.data.course);
         } else {
           alert("Course not found");
         }
@@ -51,9 +49,9 @@ export function CourseCard({ course }) {
 
 export function UpdateCourse({ course, setCourse }) {
   const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    image: "",
+    title: course.title,
+    description: course.description,
+    image: course.image,
   });
 
   const handleChange = (e) => {
@@ -62,19 +60,15 @@ export function UpdateCourse({ course, setCourse }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    fetch(`http://localhost:3000/admin/courses/${course.id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer " + localStorage.getItem("token"),
-      },
-      body: JSON.stringify(formData),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.course) {
-          setCourse(data.course);
+    axios
+      .put(`http://localhost:3000/admin/courses/${course.id}`, formData, {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      })
+      .then((res) => {
+        if (res.data.course) {
+          setCourse(res.data.course);
           alert("Course updated successfully!");
         } else {
           alert("Update failed!");
